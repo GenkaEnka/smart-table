@@ -81,6 +81,7 @@
 <!-- Table template -->
 <template id="table">
     <form name="table" class="table" style="--columns: 1fr 1fr 1fr 1fr" role="table" aria-label="Data table">
+        <input type="hidden" name="page" value="1" data-name="page">
         <!-- Header row -->
         <!-- Filter row -->
         <!-- Table content -->
@@ -94,10 +95,10 @@
 <template id="pagination">
     <div class="pagination-container">
         <div class="pagination-controls">
-            <button type="submit" name="first" class="pagination-button" data-name="firstPage" aria-label="First page">
+            <button type="button" name="first" class="pagination-button" data-name="firstPage" aria-label="First page">
                 <i class="icon chevrons-left" aria-hidden="true"></i>
             </button>
-            <button type="submit" name="prev" class="pagination-button" data-name="previousPage" aria-label="Previous page">
+            <button type="button" name="prev" class="pagination-button" data-name="previousPage" aria-label="Previous page">
                 <i class="icon left" aria-hidden="true"></i>
             </button>
             <div class="pagination-pages" data-name="pages" role="group" aria-label="Page navigation">
@@ -107,10 +108,10 @@
                     <span>1</span>
                 </label>
             </div>
-            <button type="submit" name="next" class="pagination-button" data-name="nextPage" aria-label="Next page">
+            <button type="button" name="next" class="pagination-button" data-name="nextPage" aria-label="Next page">
                 <i class="icon right" aria-hidden="true"></i>
             </button>
-            <button type="submit" name="last" class="pagination-button" data-name="lastPage" aria-label="Last page">
+            <button type="button" name="last" class="pagination-button" data-name="lastPage" aria-label="Last page">
                 <i class="icon chevrons-right" aria-hidden="true"></i>
             </button>
         </div>

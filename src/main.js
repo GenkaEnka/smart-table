@@ -29,13 +29,9 @@ async function render(action) {
   query = applySorting(query, state, action);
   query = applyPagination(query, state, action);
 
-  // получаем записи с сервера
   const { total, items } = await api.getRecords(query, true);
 
-  // обновляем пагинацию даже если items пустой
   updatePagination(total, { page: state.page, limit: state.rowsPerPage });
-
-  // рендерим строки
   sampleTable.render(items);
 }
 
@@ -54,11 +50,18 @@ const { applyPagination, updatePagination } = initPagination(
   (el, page, isCurrent) => {
     const input = el.querySelector("input");
     const label = el.querySelector("span");
-    input.value = page;
-    input.checked = isCurrent;
-    label.textContent = page;
+
+    if (input && label) {
+      input.value = page;
+      input.checked = isCurrent;
+      label.textContent = page;
+      input.addEventListener("change", () => {
+        render("paginate", { page });
+      });
+    }
     return el;
   },
+  render
 );
 
 const applySorting = initSorting([
