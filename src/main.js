@@ -81,7 +81,6 @@ async function init() {
     searchBySeller: indexes.sellers,
   });
 
-  // сразу вызываем render, чтобы таблица и кнопки появились при первой загрузке
   await render();
 }
 

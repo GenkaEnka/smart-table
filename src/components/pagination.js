@@ -1,53 +1,49 @@
-import { getPages } from "../lib/utils.js";
+export function initPagination(elements, renderPageButton) {
+  function applyPagination(query, state) {
+    query.page = state.page;
+    query.limit = state.rowsPerPage;
+    return query;
+  }
 
-let pageCount;
+  function updatePagination(total, { page, limit }) {
+    const totalPages = Math.ceil(total / limit);
 
-export const initPagination = (
-  { pages, fromRow, toRow, totalRows },
-  createPage,
-) => {
-  const pageTemplate = pages.firstElementChild.cloneNode(true);
-  pages.firstElementChild.remove();
+    // контейнер для страниц
+    const pagesContainer = elements.pages;
+    pagesContainer.innerHTML = "";
 
-  const applyPagination = (query, state, action) => {
-    const limit = state.rowsPerPage;
-    let page = state.page;
+    for (let i = 1; i <= totalPages; i++) {
+      // создаём кнопку страницы
+      const label = document.createElement("label");
+      label.className = "pagination-button";
+      label.setAttribute("aria-label", `Goto page ${i}`);
 
-    if (action) {
-      switch (action.name) {
-        case "prev":
-          page = Math.max(1, page - 1);
-          break;
-        case "next":
-          page = Math.min(pageCount, page + 1);
-          break;
-        case "first":
-          page = 1;
-          break;
-        case "last":
-          page = pageCount;
-          break;
-      }
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "page";
+      input.value = i;
+      if (i === page) input.checked = true;
+
+      const span = document.createElement("span");
+      span.textContent = i;
+
+      label.appendChild(input);
+      label.appendChild(span);
+
+      // даём возможность кастомизировать кнопку
+      renderPageButton(label, i, i === page);
+
+      pagesContainer.appendChild(label);
     }
 
-    return Object.assign({}, query, { limit, page });
-  };
+    // обновляем статус
+    const fromRow = (page - 1) * limit + 1;
+    const toRow = Math.min(page * limit, total);
 
-  const updatePagination = (total, { page, limit }) => {
-    pageCount = Math.ceil(total / limit);
-
-    const visiblePages = getPages(page, pageCount, 5);
-    pages.replaceChildren(
-      ...visiblePages.map((pageNumber) => {
-        const el = pageTemplate.cloneNode(true);
-        return createPage(el, pageNumber, pageNumber === page);
-      }),
-    );
-
-    fromRow.textContent = (page - 1) * limit + 1;
-    toRow.textContent = Math.min(page * limit, total);
-    totalRows.textContent = total;
-  };
+    elements.fromRow.textContent = total === 0 ? 0 : fromRow;
+    elements.toRow.textContent = toRow;
+    elements.totalRows.textContent = total;
+  }
 
   return { applyPagination, updatePagination };
-};
+}
