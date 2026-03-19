@@ -62,7 +62,9 @@ const applySorting = initSorting([
   sampleTable.header.elements.sortByTotal,
 ]);
 
-const { applyFiltering, updateIndexes } = initFiltering(sampleTable.filter.elements);
+const { applyFiltering, updateIndexes } = initFiltering(
+  sampleTable.filter.elements,
+);
 const applySearching = initSearching("search");
 
 const appRoot = document.querySelector("#app");
@@ -71,7 +73,7 @@ appRoot.appendChild(sampleTable.container);
 async function init() {
   const indexes = await api.getIndexes();
   updateIndexes(sampleTable.filter.elements, {
-    searchBySeller: indexes.sellers
+    searchBySeller: indexes.sellers,
   });
   render();
 }
