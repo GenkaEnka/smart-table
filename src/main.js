@@ -1,5 +1,6 @@
-import "./fonts/ys-display/fonts.css";
 import "./style.css";
+import "./fonts/ys-display/fonts.css";
+
 
 import { data as sourceData } from "./data/dataset_1.js";
 import { initData } from "./data.js";
