@@ -1,7 +1,6 @@
 import "./style.css";
 import "./fonts/ys-display/fonts.css";
 
-
 import { data as sourceData } from "./data/dataset_1.js";
 import { initData } from "./data.js";
 import { processFormData } from "./lib/utils.js";
@@ -31,8 +30,13 @@ async function render(action) {
   query = applySorting(query, state, action);
   query = applyPagination(query, state, action);
 
-  const { total, items } = await api.getRecords(query);
-  updatePagination(total, query);
+  // получаем записи с сервера
+  const { total, items } = await api.getRecords(query, true);
+
+  // обновляем пагинацию даже если items пустой
+  updatePagination(total, { page: state.page, limit: state.rowsPerPage });
+
+  // рендерим строки
   sampleTable.render(items);
 }
 
@@ -76,7 +80,9 @@ async function init() {
   updateIndexes(sampleTable.filter.elements, {
     searchBySeller: indexes.sellers,
   });
-  render();
+
+  // сразу вызываем render, чтобы таблица и кнопки появились при первой загрузке
+  await render();
 }
 
 init();
