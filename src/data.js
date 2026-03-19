@@ -61,8 +61,8 @@ export function initData() {
         return {
           id: idx,
           date: `2026-03-${String(idx).padStart(2, "0")}`,
-          seller: `Seller ${((idx - 1) % 3) + 1}`,
           customer: `Customer ${((idx - 1) % 3) + 1}`,
+          seller: `Seller ${((idx - 1) % 3) + 1}`,
           total: idx * 100,
         };
       });
