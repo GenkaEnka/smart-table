@@ -28,7 +28,7 @@ export function initTable(settings, onAction) {
     const pageInput = root.container.querySelector('input[name="page"]');
 
     if (submitter && submitter.name) {
-      if (pageInput && submitter.name === "page") {
+      if (pageInput && ['page', 'first', 'prev', 'next', 'last'].includes(submitter.name)) {
         pageInput.value = submitter.value;
       }
     }

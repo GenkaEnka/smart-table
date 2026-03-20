@@ -16,13 +16,20 @@ function collectState(action) {
   const fd = new FormData(sampleTable.container);
 
   if (action && action.name) {
-    fd.set(action.name, action.value);
+    const paginationNames = ['page', 'first', 'prev', 'next', 'last'];
+    if (paginationNames.includes(action.name)) {
+      fd.set('page', action.value);
+    } else {
+      fd.set(action.name, action.value);
+    }
   }
 
   const state = processFormData(fd);
   const rowsPerPage = parseInt(state.rowsPerPage);
   const pageFromAction =
-    action && action.name === "page" ? parseInt(action.value) : undefined;
+    action && ['page', 'first', 'prev', 'next', 'last'].includes(action.name)
+      ? parseInt(action.value)
+      : undefined;
   const page = parseInt(pageFromAction ?? state.page ?? 1);
   const total = [parseFloat(state.totalFrom), parseFloat(state.totalTo)];
   return { ...state, rowsPerPage, page, total };

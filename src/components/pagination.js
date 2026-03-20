@@ -28,14 +28,12 @@ export const initPagination = (
 
     // обновляем value у стрелок
     const form = pages.closest("form");
-    form.querySelector('[aria-label="Previous page"]').value = Math.max(
-      1,
-      page - 1,
-    );
-    form.querySelector('[aria-label="Next page"]').value = Math.min(
+    form.querySelector('button[name="prev"]').value = Math.max(1, page - 1);
+    form.querySelector('button[name="next"]').value = Math.min(
       pageCount,
       page + 1,
     );
-    form.querySelector('[aria-label="Last page"]').value = pageCount;
+    form.querySelector('button[name="last"]').value = pageCount;
+    form.querySelector('button[name="first"]').value = 1;
   };
 };
