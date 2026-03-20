@@ -12,26 +12,37 @@ import { initSearching } from "./components/searching.js";
 
 const api = initData();
 
-function collectState() {
-  const state = processFormData(new FormData(sampleTable.container));
+function collectState(action) {
+  const fd = new FormData(sampleTable.container);
+
+  if (action && action.name) {
+    fd.set(action.name, action.value);
+  }
+
+  const state = processFormData(fd);
   const rowsPerPage = parseInt(state.rowsPerPage);
-  const page = parseInt(state.page ?? 1);
+  const pageFromAction =
+    action && action.name === "page" ? parseInt(action.value) : undefined;
+  const page = parseInt(pageFromAction ?? state.page ?? 1);
   const total = [parseFloat(state.totalFrom), parseFloat(state.totalTo)];
   return { ...state, rowsPerPage, page, total };
 }
 
 async function render(action) {
-  let state = collectState();
-  let query = {};
+  let state = collectState(action);
 
+  let query = {};
   query = applySearching(query, state, action);
   query = applyFiltering(query, state, action);
   query = applySorting(query, state, action);
-  query = applyPagination(query, state, action);
+
+  query.page = state.page;
+  query.limit = state.rowsPerPage;
 
   const { total, items } = await api.getRecords(query, true);
 
-  updatePagination(total, { page: state.page, limit: state.rowsPerPage });
+  applyPagination(total, state, () => render());
+
   sampleTable.render(items);
 }
 
@@ -45,23 +56,16 @@ const sampleTable = initTable(
   render,
 );
 
-const { applyPagination, updatePagination } = initPagination(
+const applyPagination = initPagination(
   sampleTable.pagination.elements,
   (el, page, isCurrent) => {
     const input = el.querySelector("input");
     const label = el.querySelector("span");
-
-    if (input && label) {
-      input.value = page;
-      input.checked = isCurrent;
-      label.textContent = page;
-      input.addEventListener("change", () => {
-        render("paginate", { page });
-      });
-    }
+    input.value = page;
+    input.checked = isCurrent;
+    label.textContent = page;
     return el;
   },
-  render
 );
 
 const applySorting = initSorting([

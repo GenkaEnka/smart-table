@@ -1,35 +1,39 @@
 import { cloneTemplate } from "../lib/utils.js";
 
-/**
- * Инициализирует таблицу и вызывает коллбэк при любых изменениях и нажатиях на кнопки
- *
- * @param {Object} settings
- * @param {(action: HTMLButtonElement | undefined) => void} onAction
- * @returns {{container: Node, elements: *, render: render}}
- */
 export function initTable(settings, onAction) {
   const { tableTemplate, rowTemplate, before, after } = settings;
   const root = cloneTemplate(tableTemplate);
 
+  // дополнительные шаблоны до таблицы
   before.reverse().forEach((subName) => {
     root[subName] = cloneTemplate(subName);
     root.container.prepend(root[subName].container);
   });
 
+  // дополнительные шаблоны после таблицы
   after.forEach((subName) => {
     root[subName] = cloneTemplate(subName);
     root.container.append(root[subName].container);
   });
 
-  root.container.addEventListener("change", onAction);
-
+  // обработка событий формы
+  root.container.addEventListener("change", () => onAction());
   root.container.addEventListener("reset", () => {
     setTimeout(onAction);
   });
-
   root.container.addEventListener("submit", (event) => {
     event.preventDefault();
-    onAction(event.submitter);
+
+    const submitter = event.submitter;
+    const pageInput = root.container.querySelector('input[name="page"]');
+
+    if (submitter && submitter.name) {
+      if (pageInput && submitter.name === "page") {
+        pageInput.value = submitter.value;
+      }
+    }
+
+    onAction(submitter);
   });
 
   const render = (data) => {
